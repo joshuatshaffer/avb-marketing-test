@@ -1,6 +1,7 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import { ContactList } from "./ContactList";
 
 function App() {
   return (
@@ -19,6 +20,9 @@ function App() {
           Learn React
         </a>
       </header>
+      <ContactList
+        selectContact={contactId => alert(`You selected contact ${contactId}.`)}
+      />
     </div>
   );
 }
