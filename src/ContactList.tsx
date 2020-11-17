@@ -1,8 +1,8 @@
 import React from "react";
-import { useContactsPaginated } from "./avb-contacts-api";
+import { useContactsPaginated, ContactResponseDto } from "./avb-contacts-api";
 
 export interface ContactListProps {
-  selectContact: (contactId: number) => void;
+  selectContact: (contact: ContactResponseDto) => void;
 }
 
 export function ContactList({ selectContact }: ContactListProps) {
@@ -13,8 +13,8 @@ export function ContactList({ selectContact }: ContactListProps) {
   return (
     <ul>
       {data.contacts.map(contact => (
-        <li>
-          <button onClick={() => selectContact(contact.id)}>
+        <li key={contact.id}>
+          <button onClick={() => selectContact(contact)}>
             {contact.firstName} {contact.lastName}
           </button>
         </li>
