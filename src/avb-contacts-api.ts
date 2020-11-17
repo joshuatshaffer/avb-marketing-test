@@ -1,4 +1,5 @@
 import useSWR from "swr";
+import axios from "axios";
 
 export interface ContactResponsePaginatedDto {
   page: number;
@@ -25,7 +26,7 @@ const apiRootUrl = "https://avb-contacts-api.herokuapp.com";
 export function useContactsPaginated() {
   const { data, error } = useSWR<ContactResponsePaginatedDto>(
     `${apiRootUrl}/contacts/paginated`,
-    url => fetch(url).then(res => res.json())
+    url => axios.get<ContactResponsePaginatedDto>(url).then(res => res.data)
   );
 
   return { data, error };
