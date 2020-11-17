@@ -13,6 +13,7 @@ import {
   editContact,
   deleteContact
 } from "./avb-contacts-api";
+import "./ContactForm.css";
 
 interface FieldValues {
   firstName: string;
@@ -54,11 +55,12 @@ function EmailInputs({
   });
 
   return (
-    <>
-      <ul>
+    <div>
+      <ul className="email-list">
         {fields.map((item, index) => (
           <li key={item.id}>
             <input
+              className="text-input"
               name={`emails[${index}].value`}
               type="email"
               required
@@ -66,16 +68,24 @@ function EmailInputs({
               defaultValue={item.value}
             />
 
-            <button type="button" onClick={() => remove(index)}>
-              Delete
+            <button
+              className="email-delete-button"
+              type="button"
+              onClick={() => remove(index)}
+            >
+              -
             </button>
           </li>
         ))}
       </ul>
-      <button type="button" onClick={() => append({ value: "" })}>
+      <button
+        className="email-add-button"
+        type="button"
+        onClick={() => append({ value: "" })}
+      >
         +
       </button>
-    </>
+    </div>
   );
 }
 
@@ -104,21 +114,32 @@ export function ContactForm({ contactToEdit, onFormDone }: ContactFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form className="contact-form" onSubmit={handleSubmit(onSubmit)}>
       <label>
         First Name
-        <input name="firstName" required ref={register({ required: true })} />
+        <input
+          className="text-input"
+          name="firstName"
+          required
+          ref={register({ required: true })}
+        />
       </label>
 
       <label>
         Last Name
-        <input name="lastName" required ref={register({ required: true })} />
+        <input
+          className="text-input"
+          name="lastName"
+          required
+          ref={register({ required: true })}
+        />
       </label>
 
       <EmailInputs register={register} control={control} />
 
       {contactToEdit ? (
         <button
+          className="delete-button"
           onClick={() => {
             deleteContact(contactToEdit);
             onFormDone?.();
@@ -127,8 +148,12 @@ export function ContactForm({ contactToEdit, onFormDone }: ContactFormProps) {
           Delete
         </button>
       ) : null}
-      <button onClick={() => onFormDone?.()}>Cancel</button>
-      <input type="submit" value="Submit" />
+      <button className="cancel-button" onClick={() => onFormDone?.()}>
+        Cancel
+      </button>
+      <button className="submit-button" type="submit">
+        Save
+      </button>
     </form>
   );
 }

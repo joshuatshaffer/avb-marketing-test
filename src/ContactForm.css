@@ -1,0 +1,69 @@
+.text-input {
+  padding: 10px;
+
+  background: #f9fbff;
+  border: 1px solid #d7e7ff;
+  box-sizing: border-box;
+}
+
+.delete-button {
+  height: 36px;
+  width: 120px;
+  font-size: 20px;
+
+  background: #ff5757;
+  color: white;
+  border: none;
+}
+
+.cancel-button {
+  height: 36px;
+  width: 120px;
+  font-size: 20px;
+
+  background: #f9fbff;
+  border: 1px solid #579aff;
+  box-sizing: border-box;
+}
+
+.submit-button {
+  height: 36px;
+  width: 120px;
+  font-size: 20px;
+
+  background: #579aff;
+  color: white;
+  border: none;
+}
+
+.email-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.email-delete-button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+
+  background: #ff5757;
+  color: white;
+  border: none;
+
+  display: none;
+}
+
+li:hover > .email-delete-button {
+  display: inline-block;
+}
+
+.email-add-button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+
+  background: #579aff;
+  color: white;
+  border: none;
+}

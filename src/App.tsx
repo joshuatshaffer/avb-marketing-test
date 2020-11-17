@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { IoIosAddCircle } from "react-icons/io";
 import "./App.css";
 import { ContactList } from "./ContactList";
 import { ContactForm } from "./ContactForm";
@@ -15,12 +16,22 @@ function App() {
   const onFormDone = () => setState({ state: "idle" });
 
   return (
-    <div>
-      <div>
-        Contacts{" "}
-        <button onClick={() => setState({ state: "adding" })}>+</button>
+    <div className="app">
+      <div className="contact-list-container">
+        <div className="contact-list-header">
+          <h1>Contacts</h1>
+          <button
+            className="add-button"
+            onClick={() => setState({ state: "adding" })}
+          >
+            <IoIosAddCircle size="43px" />
+          </button>
+        </div>
         <ContactList
           selectContact={contact => setState({ state: "editing", contact })}
+          selectedContact={
+            state.state === "editing" ? state.contact : undefined
+          }
         />
       </div>
       <div>
