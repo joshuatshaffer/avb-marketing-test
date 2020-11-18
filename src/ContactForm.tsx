@@ -6,6 +6,7 @@ import {
   Control,
   UseFormMethods
 } from "react-hook-form";
+import { AiFillPlusCircle, AiFillMinusCircle } from "react-icons/ai";
 import {
   ContactResponseDto,
   ContactDto,
@@ -55,7 +56,8 @@ function EmailInputs({
   });
 
   return (
-    <div>
+    <div className="emails-section">
+      Email
       <ul className="email-list">
         {fields.map((item, index) => (
           <li key={item.id}>
@@ -73,7 +75,7 @@ function EmailInputs({
               type="button"
               onClick={() => remove(index)}
             >
-              -
+              <AiFillMinusCircle size="30px" />
             </button>
           </li>
         ))}
@@ -83,7 +85,7 @@ function EmailInputs({
         type="button"
         onClick={() => append({ value: "" })}
       >
-        +
+        <AiFillPlusCircle size="30px" /> add email
       </button>
     </div>
   );
@@ -115,45 +117,49 @@ export function ContactForm({ contactToEdit, onFormDone }: ContactFormProps) {
 
   return (
     <form className="contact-form" onSubmit={handleSubmit(onSubmit)}>
-      <label>
-        First Name
-        <input
-          className="text-input"
-          name="firstName"
-          required
-          ref={register({ required: true })}
-        />
-      </label>
+      <div className="names-section">
+        <label>
+          First Name
+          <input
+            className="text-input"
+            name="firstName"
+            required
+            ref={register({ required: true })}
+          />
+        </label>
 
-      <label>
-        Last Name
-        <input
-          className="text-input"
-          name="lastName"
-          required
-          ref={register({ required: true })}
-        />
-      </label>
+        <label>
+          Last Name
+          <input
+            className="text-input"
+            name="lastName"
+            required
+            ref={register({ required: true })}
+          />
+        </label>
+      </div>
 
       <EmailInputs register={register} control={control} />
 
-      {contactToEdit ? (
-        <button
-          className="delete-button"
-          onClick={() => {
-            deleteContact(contactToEdit);
-            onFormDone?.();
-          }}
-        >
-          Delete
+      <div className="buttons-section">
+        {contactToEdit ? (
+          <button
+            className="delete-button"
+            onClick={() => {
+              deleteContact(contactToEdit);
+              onFormDone?.();
+            }}
+          >
+            Delete
+          </button>
+        ) : null}
+        <button className="cancel-button" onClick={() => onFormDone?.()}>
+          Cancel
         </button>
-      ) : null}
-      <button className="cancel-button" onClick={() => onFormDone?.()}>
-        Cancel
-      </button>
-      <button className="submit-button" type="submit">
-        Save
-      </button>
+        <button className="submit-button" type="submit">
+          Save
+        </button>
+      </div>
     </form>
   );
 }

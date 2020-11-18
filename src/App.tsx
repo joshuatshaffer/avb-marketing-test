@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IoIosAddCircle } from "react-icons/io";
+import { AiFillPlusCircle } from "react-icons/ai";
 import "./App.css";
 import { ContactList } from "./ContactList";
 import { ContactForm } from "./ContactForm";
@@ -24,7 +24,7 @@ function App() {
             className="add-button"
             onClick={() => setState({ state: "adding" })}
           >
-            <IoIosAddCircle size="43px" />
+            <AiFillPlusCircle size="43px" />
           </button>
         </div>
         <ContactList
