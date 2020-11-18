@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import axios from "axios";
 
 export interface ContactResponsePaginatedDto {
@@ -23,19 +23,39 @@ export interface ContactDto {
 
 const apiRootUrl = "https://avb-contacts-api.herokuapp.com";
 
-export function addContact(contact: ContactDto) {
-  return axios.post<ContactResponseDto>(`${apiRootUrl}/contacts`, contact);
+export async function addContact(contact: ContactDto) {
+  const res = await axios.post<ContactResponseDto>(
+    `${apiRootUrl}/contacts`,
+    contact
+  );
+
+  mutate(`${apiRootUrl}/contacts/paginated`);
+
+  return res;
 }
 
-export function editContact({ id: contactId, ...contact }: ContactResponseDto) {
-  return axios.put<ContactResponseDto>(
+export async function editContact({
+  id: contactId,
+  ...contact
+}: ContactResponseDto) {
+  const res = await axios.put<ContactResponseDto>(
     `${apiRootUrl}/contacts/${contactId}`,
     contact
   );
+
+  mutate(`${apiRootUrl}/contacts/paginated`);
+
+  return res;
 }
 
-export function deleteContact({ id: contactId }: ContactResponseDto) {
-  return axios.delete<unknown>(`${apiRootUrl}/contacts/${contactId}`);
+export async function deleteContact({ id: contactId }: ContactResponseDto) {
+  const res = await axios.delete<unknown>(
+    `${apiRootUrl}/contacts/${contactId}`
+  );
+
+  mutate(`${apiRootUrl}/contacts/paginated`);
+
+  return res;
 }
 
 export function useContactsPaginated() {
