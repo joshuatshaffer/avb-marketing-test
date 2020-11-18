@@ -19,7 +19,7 @@ import "./ContactForm.css";
 interface FieldValues {
   firstName: string;
   lastName: string;
-  emails: { id?: any; value: string }[];
+  emails?: { id?: any; value: string }[];
 }
 
 function contactToFieldValues(contact: ContactResponseDto): FieldValues {
@@ -35,7 +35,7 @@ function contactToFieldValues(contact: ContactResponseDto): FieldValues {
 }
 
 function fieldValuesToContact(values: FieldValues): ContactDto {
-  const emails = values.emails.map(({ value }) => value);
+  const emails = values.emails?.map(({ value }) => value) ?? [];
 
   return {
     ...values,
