@@ -33,54 +33,52 @@ function emitContactMutationEvent() {
 }
 
 export async function addContact(contact: ContactDto) {
-  const res = await axios.post<ContactResponseDto>(
-    `${apiRootUrl}/contacts`,
-    contact
-  );
+  await axios.post<ContactResponseDto>(`${apiRootUrl}/contacts`, contact);
 
   emitContactMutationEvent();
-
-  return res;
 }
 
 export async function editContact({
   id: contactId,
   ...contact
 }: ContactResponseDto) {
-  const res = await axios.put<ContactResponseDto>(
+  await axios.put<ContactResponseDto>(
     `${apiRootUrl}/contacts/${contactId}`,
     contact
   );
 
   emitContactMutationEvent();
-
-  return res;
 }
 
 export async function deleteContact({ id: contactId }: ContactResponseDto) {
-  const res = await axios.delete<unknown>(
-    `${apiRootUrl}/contacts/${contactId}`
-  );
+  await axios.delete<unknown>(`${apiRootUrl}/contacts/${contactId}`);
 
   emitContactMutationEvent();
+}
 
-  return res;
+function isLastPage({
+  page,
+  itemsPerPage,
+  totalItems
+}: ContactResponsePaginatedDto): boolean {
+  return page * itemsPerPage >= totalItems;
 }
 
 const getKey = (
   pageIndex: number,
   previousPageData: ContactResponsePaginatedDto | null
 ) => {
-  if (previousPageData && !previousPageData.contacts.length) {
-    // reached the end
+  if (previousPageData && isLastPage(previousPageData)) {
     return null;
   }
 
-  return `${apiRootUrl}/contacts/paginated?page=${pageIndex + 1}`;
+  // swr indexes pages from 0, but the api indexes from 1.
+  const page = pageIndex + 1;
+
+  return `${apiRootUrl}/contacts/paginated?page=${page}`;
 };
 
-const fetcher = (url: string) =>
-  axios.get<ContactResponsePaginatedDto>(url).then(res => res.data);
+const fetcher = (url: string) => axios.get(url).then(res => res.data);
 
 export function useContactsPaginated() {
   const { data, error, setSize, mutate } = useSWRInfinite<
@@ -91,6 +89,7 @@ export function useContactsPaginated() {
     setSize(s => s + 1);
   }, [setSize]);
 
+  // When a contact is modified this list may need to refresh.
   useEffect(() => {
     function handelContactMutation() {
       mutate();
@@ -105,7 +104,7 @@ export function useContactsPaginated() {
   return {
     contacts: data?.flatMap(d => d.contacts),
     error,
-    hasNextPage: data ? data[data.length - 1].contacts.length > 0 : false,
+    hasNextPage: data ? !isLastPage(data[data.length - 1]) : false,
     onLoadMore
   };
 }

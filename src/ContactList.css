@@ -6,7 +6,7 @@
   overflow: auto;
 }
 
-.unbutton {
+.select-contact-button {
   background: none;
   border: none;
   cursor: pointer;
@@ -18,11 +18,11 @@
   text-align: left;
 }
 
-.unbutton:hover {
+.select-contact-button:hover {
   background: #d8e7ff;
 }
 
-.unbutton.selected-contact {
+.select-contact-button.selected-contact {
   background: #579aff;
   color: white;
 }

@@ -29,7 +29,7 @@ export function ContactList({
         <li key={contact.id}>
           <button
             className={
-              "unbutton " +
+              "select-contact-button " +
               (selectedContact?.id === contact.id ? "selected-contact" : "")
             }
             onClick={() => selectContact(contact)}
