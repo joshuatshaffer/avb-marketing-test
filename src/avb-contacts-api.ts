@@ -1,6 +1,6 @@
-import { mutate, useSWRInfinite } from "swr";
+import { useSWRInfinite } from "swr";
 import axios from "axios";
-import { useCallback } from "react";
+import { useEffect, useCallback } from "react";
 
 export interface ContactResponsePaginatedDto {
   page: number;
@@ -24,13 +24,21 @@ export interface ContactDto {
 
 const apiRootUrl = "https://avb-contacts-api.herokuapp.com";
 
+const onContactMutateListeners = new Set<() => void>();
+
+function emitContactMutationEvent() {
+  for (let cb of onContactMutateListeners) {
+    cb();
+  }
+}
+
 export async function addContact(contact: ContactDto) {
   const res = await axios.post<ContactResponseDto>(
     `${apiRootUrl}/contacts`,
     contact
   );
 
-  mutate(`${apiRootUrl}/contacts/paginated`);
+  emitContactMutationEvent();
 
   return res;
 }
@@ -44,7 +52,7 @@ export async function editContact({
     contact
   );
 
-  mutate(`${apiRootUrl}/contacts/paginated`);
+  emitContactMutationEvent();
 
   return res;
 }
@@ -54,7 +62,7 @@ export async function deleteContact({ id: contactId }: ContactResponseDto) {
     `${apiRootUrl}/contacts/${contactId}`
   );
 
-  mutate(`${apiRootUrl}/contacts/paginated`);
+  emitContactMutationEvent();
 
   return res;
 }
@@ -75,14 +83,24 @@ const fetcher = (url: string) =>
   axios.get<ContactResponsePaginatedDto>(url).then(res => res.data);
 
 export function useContactsPaginated() {
-  const { data, error, setSize } = useSWRInfinite<ContactResponsePaginatedDto>(
-    getKey,
-    fetcher
-  );
+  const { data, error, setSize, mutate } = useSWRInfinite<
+    ContactResponsePaginatedDto
+  >(getKey, fetcher);
 
   const onLoadMore = useCallback(() => {
     setSize(s => s + 1);
   }, [setSize]);
+
+  useEffect(() => {
+    function handelContactMutation() {
+      mutate();
+    }
+    onContactMutateListeners.add(handelContactMutation);
+
+    return () => {
+      onContactMutateListeners.delete(handelContactMutation);
+    };
+  }, [mutate]);
 
   return {
     contacts: data?.flatMap(d => d.contacts),
