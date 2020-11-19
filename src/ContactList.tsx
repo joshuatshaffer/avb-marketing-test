@@ -1,4 +1,5 @@
 import React from "react";
+import useInfiniteScroll from "react-infinite-scroll-hook";
 import { useContactsPaginated, ContactResponseDto } from "./avb-contacts-api";
 import "./ContactList.css";
 
@@ -11,13 +12,20 @@ export function ContactList({
   selectContact,
   selectedContact
 }: ContactListProps) {
-  const { data, error } = useContactsPaginated();
+  const { contacts, error, hasNextPage, onLoadMore } = useContactsPaginated();
+
+  const infiniteRef = useInfiniteScroll<HTMLUListElement>({
+    loading: !contacts,
+    hasNextPage,
+    onLoadMore,
+    scrollContainer: "parent"
+  });
 
   if (error) return <div>failed to load</div>;
-  if (!data) return <div>loading...</div>;
+  if (!contacts) return <div>loading...</div>;
   return (
-    <ul className="contact-list">
-      {data.contacts.map(contact => (
+    <ul className="contact-list" ref={infiniteRef}>
+      {contacts.map(contact => (
         <li key={contact.id}>
           <button
             className={

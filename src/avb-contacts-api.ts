@@ -1,5 +1,6 @@
-import useSWR, { mutate } from "swr";
+import { mutate, useSWRInfinite } from "swr";
 import axios from "axios";
+import { useCallback } from "react";
 
 export interface ContactResponsePaginatedDto {
   page: number;
@@ -58,11 +59,35 @@ export async function deleteContact({ id: contactId }: ContactResponseDto) {
   return res;
 }
 
+const getKey = (
+  pageIndex: number,
+  previousPageData: ContactResponsePaginatedDto | null
+) => {
+  if (previousPageData && !previousPageData.contacts.length) {
+    // reached the end
+    return null;
+  }
+
+  return `${apiRootUrl}/contacts/paginated?page=${pageIndex + 1}`;
+};
+
+const fetcher = (url: string) =>
+  axios.get<ContactResponsePaginatedDto>(url).then(res => res.data);
+
 export function useContactsPaginated() {
-  const { data, error } = useSWR<ContactResponsePaginatedDto>(
-    `${apiRootUrl}/contacts/paginated`,
-    url => axios.get<ContactResponsePaginatedDto>(url).then(res => res.data)
+  const { data, error, setSize } = useSWRInfinite<ContactResponsePaginatedDto>(
+    getKey,
+    fetcher
   );
 
-  return { data, error };
+  const onLoadMore = useCallback(() => {
+    setSize(s => s + 1);
+  }, [setSize]);
+
+  return {
+    contacts: data?.flatMap(d => d.contacts),
+    error,
+    hasNextPage: data ? data[data.length - 1].contacts.length > 0 : false,
+    onLoadMore
+  };
 }
